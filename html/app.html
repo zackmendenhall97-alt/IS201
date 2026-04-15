@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Generator</title>
+    <style>
+        :root {
+            --bg: white;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .palette-container {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            height: 300px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .color-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .color-card:hover {
+            transform: scale(1.02);
+        }
+
+        .hex-code {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            user-select: all;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Color Palette Generator</h1>
+        <p>Press <strong>Space</strong> or click the button to generate</p>
+        
+        <div class="palette-container" id="palette">
+            </div>
+
+        <button onclick="generatePalette()">Generate New Palette</button>
+    </div>
+
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script>
+        function generateRandomHex() {
+            const chars = "0123456789ABCDEF";
+            let color = "#";
+            for (let i = 0; i < 6; i++) {
+                color += chars[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function generatePalette() {
+            const palette = document.getElementById('palette');
+            palette.innerHTML = ''; // Clear existing
+
+            for (let i = 0; i < 5; i++) {
+                const hex = generateRandomHex();
+                const card = document.createElement('div');
+                card.className = 'color-card';
+                card.style.backgroundColor = hex;
+                
+                // Add click-to-copy functionality
+                card.onclick = () => copyToClipboard(hex);
+
+                card.innerHTML = `<span class="hex-code">${hex}</span>`;
+                palette.appendChild(card);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 1500);
+        }
+
+        // Spacebar listener
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                generatePalette();
+            }
+        });
+
+        // Init
+        generatePalette();
+    </script>
+</body>
+</html>
